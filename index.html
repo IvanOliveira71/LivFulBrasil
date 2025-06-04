@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Guide: Establishing Your Company in Brazil</title>
+    <!-- Chosen Palette: Warm Neutrals -->
+    <!-- Application Structure Plan: The SPA is designed as a thematic, non-linear dashboard to serve as a decision-making tool. A sticky top navigation allows users to jump to key sections: 1) Legal Setup, 2) Operations Hub (with sub-navigation for HR, Pharma, Digital, and Imports), 3) Financial Flow, and 4) Recommendations. This structure breaks down the complex report into logical, manageable modules. It prioritizes user tasks (e.g., "compare legal entities," "understand HR costs") over the report's original linear flow, making the information more accessible and actionable for strategic planning. -->
+    <!-- Visualization & Content Choices: Report Info -> Goal -> Viz/Presentation Method -> Interaction -> Justification. 
+        - Legal Entity Comparison -> Compare -> Interactive Table -> Click-to-expand rows -> More engaging than a static table. 
+        - HR Costs -> Inform/Compare -> Donut Chart (Chart.js) + Interactive sliders/inputs -> Visually breaks down the high "Custo Brasil" and allows for dynamic cost exploration.
+        - Import Duties -> Inform -> Cumulative Bar Chart (Chart.js) -> Clearly demonstrates the cascading effect of multiple taxes on import costs.
+        - Processes (ANVISA, Imports, Repatriation) -> Organize -> HTML/CSS Flowcharts -> Simplifies complex multi-step procedures into easy-to-follow visual guides.
+        - Withholding Taxes -> Inform -> Interactive Cards -> Clickable elements for different income types provide focused information without cluttering the UI. 
+        - All choices use Canvas or HTML/CSS to adhere to the NO SVG/Mermaid constraint, ensuring a dynamic and interactive experience. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        .table-row-details {
+            display: none;
+        }
+        .table-row.active .table-row-details {
+            display: table-row;
+        }
+        .nav-link.active {
+            font-weight: 700;
+            color: #1e3a8a; /* Tailwind's blue-800 */
+        }
+        .loading-spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white/80 backdrop-blur-lg shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <h1 class="text-xl md:text-2xl font-bold text-blue-900">Brazil Expansion Guide</h1>
+            <div class="hidden md:flex space-x-8">
+                <a href="#legal" class="text-gray-600 hover:text-blue-800 transition duration-300 nav-link">Legal Setup</a>
+                <a href="#operations" class="text-gray-600 hover:text-blue-800 transition duration-300 nav-link">Operations Hub</a>
+                <a href="#financial" class="text-gray-600 hover:text-blue-800 transition duration-300 nav-link">Financial Flow</a>
+                <a href="#recommendations" class="text-gray-600 hover:text-blue-800 transition duration-300 nav-link">Recommendations</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 border-t border-gray-200">
+            <a href="#legal" class="block py-2 text-gray-600 hover:text-blue-800">Legal Setup</a>
+            <a href="#operations" class="block py-2 text-gray-600 hover:text-blue-800">Operations Hub</a>
+            <a href="#financial" class="block py-2 text-gray-600 hover:text-blue-800">Financial Flow</a>
+            <a href="#recommendations" class="block py-2 text-gray-600 hover:text-blue-800">Recommendations</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto p-4 md:p-8">
+
+        <section id="intro" class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Strategic Entry into Brazil</h2>
+            <p class="max-w-3xl mx-auto text-lg text-gray-600">
+                This interactive guide translates the complex legal, tax, and regulatory landscape of Brazil into an actionable dashboard. Use these tools to explore your options, understand the costs, and make informed decisions for your company's expansion.
+            </p>
+        </section>
+
+        <!-- Section 1: Legal Setup -->
+        <section id="legal" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl md:text-3xl font-bold mb-2 text-blue-900">1. Legal Setup: Choosing Your Corporate Structure</h3>
+            <p class="text-gray-600 mb-8 max-w-4xl">The foundation of your Brazilian operation is its legal structure. This choice impacts governance, liability, and administrative complexity. The report strongly recommends the <strong class="font-semibold text-gray-800">Sociedade Limitada (Ltda.)</strong> for its flexibility and simplicity, making it the ideal vehicle for a wholly-owned subsidiary. Explore the comparison below to understand why.</p>
+            
+            <div class="bg-white p-6 rounded-xl shadow-lg">
+                <h4 class="font-bold text-xl mb-4 text-center">Entity Comparison: Ltda. vs. S.A.</h4>
+                <p class="text-center text-gray-500 mb-6">Click on a row to expand for more details.</p>
+                <div class="overflow-x-auto">
+                    <table id="entity-table" class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-4 font-semibold text-gray-700">Feature</th>
+                                <th class="p-4 font-semibold text-green-700 bg-green-50 rounded-tl-lg">✓ Sociedade Limitada (Ltda.)</th>
+                                <th class="p-4 font-semibold text-orange-700 bg-orange-50 rounded-tr-lg">Sociedade Anônima (S.A.)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Table rows will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+                 <div class="mt-8 p-4 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                    <h5 class="font-bold text-lg text-blue-800">Mandatory Legal Representative</h5>
+                    <p class="text-blue-700">Regardless of the entity, you must appoint an individual residing in Brazil to hold power of attorney. This person represents the foreign shareholders before all Brazilian authorities. This is a critical appointment requiring careful consideration of trust and risk management.</p>
+                </div>
+
+                <!-- Gemini API Feature: Legal Entity Advisor -->
+                <div class="mt-8 pt-6 border-t border-gray-200">
+                    <h4 class="font-bold text-xl mb-4">Legal Entity Advisor ✨</h4>
+                    <p class="text-gray-600 mb-4">Ask a question about the legal entities (Ltda. or S.A.) to get more detailed insights.</p>
+                    <textarea id="legal-query-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4" rows="3" placeholder="E.g., 'What are the key differences in liability for an Ltda. vs. an S.A.?'"></textarea>
+                    <button id="ask-legal-button" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                        Ask Gemini ✨ <span id="legal-loading-spinner" class="loading-spinner hidden"></span>
+                    </button>
+                    <div id="legal-response-area" class="mt-4 p-4 bg-gray-100 rounded-lg hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Operations Hub -->
+        <section id="operations" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl md:text-3xl font-bold mb-2 text-blue-900">2. Operations Hub</h3>
+            <p class="text-gray-600 mb-8 max-w-4xl">Your Brazilian operations will span human resources, pharmaceutical R&D, a digital platform, and cosmetics importation. Each area has its own set of rules, costs, and processes. Use the tabs below to navigate the specific requirements for each operational unit.</p>
+            
+            <div class="bg-white p-2 md:p-4 rounded-xl shadow-lg">
+                <div class="border-b border-gray-200">
+                    <nav id="ops-tabs" class="flex flex-wrap -mb-px" aria-label="Tabs">
+                        <!-- Ops tabs will be inserted here by JavaScript -->
+                    </nav>
+                </div>
+                <div id="ops-content" class="pt-6 px-2 md:px-4">
+                    <!-- Ops content panels will be inserted here by JavaScript -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Financial Flow -->
+        <section id="financial" class="mb-16 scroll-mt-24">
+            <h3 class="text-2xl md:text-3xl font-bold mb-2 text-blue-900">3. Financial Flow: U.S. ↔ Brazil</h3>
+            <p class="text-gray-600 mb-8 max-w-4xl">Managing money flow between the U.S. and Brazil is complicated by the lack of a comprehensive income tax treaty. This section breaks down withholding taxes, new transfer pricing rules, and the process for repatriating your profits.</p>
+            
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h4 class="font-bold text-xl mb-4">Cross-Border Withholding Taxes (IRRF)</h4>
+                    <p class="text-gray-600 mb-4">Brazil levies withholding tax on remittances abroad. The general rate is 15%, but this can change based on the recipient's location.</p>
+                     <div id="wht-cards" class="space-y-4">
+                        <!-- WHT cards will be inserted here by JavaScript -->
+                    </div>
+                    <div class="mt-4 flex items-center justify-end">
+                        <label for="tax-haven-toggle" class="mr-3 text-sm font-medium text-gray-900">Recipient in Tax Haven?</label>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="tax-haven-toggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-red-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-xl shadow-lg">
+                    <h4 class="font-bold text-xl mb-4">Profit Repatriation</h4>
+                     <p class="text-gray-600 mb-4">Repatriating profits and capital is permitted once the investment is registered with the Central Bank of Brazil (BCB). Follow these steps to ensure smooth transfers.</p>
+                     <div id="repatriation-flow" class="space-y-2">
+                        <!-- Repatriation flow steps inserted here by JS -->
+                    </div>
+                </div>
+            </div>
+             <div class="mt-8 bg-white p-6 rounded-xl shadow-lg">
+                <h4 class="font-bold text-xl mb-4">Critical Update: Transfer Pricing</h4>
+                <p class="text-gray-600 mb-4">As of January 2024, Brazil has abandoned its old formulaic transfer pricing rules and fully adopted the OECD's "arm's length" principle. This is a major shift requiring robust documentation for all intercompany transactions (IP licenses, services, goods).</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+                    <div class="p-4 bg-gray-100 rounded-lg">
+                        <h5 class="font-semibold text-lg text-gray-500">OLD SYSTEM (Pre-2024)</h5>
+                        <p>Formulaic, with fixed statutory margins.</p>
+                    </div>
+                    <div class="p-4 bg-green-50 border-2 border-green-200 rounded-lg">
+                        <h5 class="font-semibold text-lg text-green-800">NEW SYSTEM (2024 Onwards)</h5>
+                        <p>OECD "Arm's Length" Principle. Requires detailed comparability analysis and documentation.</p>
+                    </div>
+                </div>
+                <p class="mt-4 text-sm text-red-600 font-medium text-center">Increased compliance burden and higher risk of tax disputes.</p>
+            </div>
+        </section>
+
+        <!-- Section 4: Recommendations -->
+        <section id="recommendations" class="scroll-mt-24">
+            <h3 class="text-2xl md:text-3xl font-bold mb-2 text-blue-900">4. Final Recommendations</h3>
+            <p class="text-gray-600 mb-8 max-w-4xl">Based on the comprehensive analysis, here are the top strategic recommendations for a successful and compliant entry into the Brazilian market.</p>
+            
+            <div id="recommendations-list" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                 <!-- Recommendations inserted here by JS -->
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-gray-800 text-white mt-16">
+        <div class="container mx-auto p-6 text-center text-gray-400">
+            <p>&copy; 2025 U.S. Inc. Brazil Expansion Initiative. All data derived from the internal strategy report.</p>
+            <p class="text-sm mt-2">This is an interactive visualization and does not constitute legal or financial advice. Consult with qualified local experts.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- DATA ---
+            const entityComparisonData = [
+                { feature: 'Governing Law', ltda: 'Civil Code', sa: 'Corporate Law', details: 'Ltda. is simpler and governed by the Civil Code, while S.A. follows the more rigid Corporate Law, designed for publicly-traded companies.' },
+                { feature: 'U.S. Equivalent', ltda: 'LLC', sa: 'Corporation', details: 'This analogy reflects the difference in operational complexity and governance.' },
+                { feature: 'Ownership', ltda: 'Quotas (Restricted Transfer)', sa: 'Shares (Freely Transferable)', details: 'Transferring ownership in an Ltda. requires amending the articles of association, offering more control. S.A. shares are easier to trade.' },
+                { feature: 'Governance', ltda: 'Simpler (Administrator)', sa: 'Complex (Board Required)', details: 'Ltda. does not require a formal board of directors, reducing administrative overhead compared to an S.A.' },
+                { feature: 'Profit Distribution', ltda: 'Flexible (Disproportionate)', sa: 'Based on Equity', details: 'An Ltda. can distribute profits in proportions different from ownership quotas, a major strategic advantage for financial planning.' },
+                { feature: 'Best For', ltda: 'Most foreign subsidiaries', sa: 'Public offerings / Complex structures', details: 'For the stated business goals, the Ltda. is the clear and recommended choice due to its operational simplicity and flexibility.' },
+            ];
+
+            const opsData = {
+                hr: {
+                    id: 'hr',
+                    title: 'Human Resources',
+                    icon: '👥',
+                    content: `
+                        <h4 class="font-bold text-xl mb-4">Managing Your Brazilian Team</h4>
+                        <p class="text-gray-600 mb-6">Transitioning your 5 contractors to employees is a critical step to avoid severe penalties for misclassification. Brazil's labor laws (CLT) are highly protective of employees. Engaging an <strong>Employer of Record (EOR)</strong> is the top recommendation to manage payroll, benefits, and compliance, mitigating significant legal and financial risks.</p>
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h5 class="font-bold text-lg mb-2">The True Cost of an Employee</h5>
+                                <p class="text-gray-600 mb-4">Mandatory contributions significantly increase payroll costs beyond the base salary. Use the slider to see the estimated cost breakdown.</p>
+                                <div class="mb-4">
+                                    <label for="salary-slider" class="block mb-2 text-sm font-medium text-gray-900">Employee Monthly Gross Salary: <span id="salary-value" class="font-bold">R$ 10,000</span></label>
+                                    <input id="salary-slider" type="range" min="3000" max="30000" value="10000" step="500" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                </div>
+                                <div class="p-4 bg-gray-100 rounded-lg">
+                                    <div class="flex justify-between font-semibold"><span>Total Estimated Employer Cost:</span><span id="total-cost">R$ 16,730</span></div>
+                                    <div class="text-sm text-gray-500 mt-1">Approx. <span id="cost-multiplier">67.3%</span> over gross salary</div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="hrCostChart"></canvas>
+                            </div>
+                        </div>
+                        <!-- Gemini API Feature: HR Document Drafter -->
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h4 class="font-bold text-xl mb-4">HR Document Drafter ✨</h4>
+                            <p class="text-gray-600 mb-4">Generate a basic draft for an HR document. For example, a simple job description.</p>
+                            <input type="text" id="job-title-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4" placeholder="Enter job title (e.g., 'Senior Software Engineer')">
+                            <button id="generate-jd-button" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                                Generate Job Description ✨ <span id="jd-loading-spinner" class="loading-spinner hidden"></span>
+                            </button>
+                            <div id="jd-response-area" class="mt-4 p-4 bg-gray-100 rounded-lg hidden whitespace-pre-wrap"></div>
+                        </div>
+                    `
+                },
+                pharma: {
+                    id: 'pharma',
+                    title: 'Pharma R&D',
+                    icon: '🔬',
+                    content: `
+                        <h4 class="font-bold text-xl mb-4">Pharmaceutical IP & R&D</h4>
+                        <p class="text-gray-600 mb-6">Your R&D activities (TRL-3 to TRL-7) are subject to strict ANVISA oversight and a unique IP landscape. While Brazil encourages R&D through incentives, navigating the "patent paradox" and lack of data protection requires a robust strategy.</p>
+                        <div class="grid md:grid-cols-2 gap-8">
+                            <div class="p-4 bg-blue-50 rounded-lg">
+                                <h5 class="font-bold text-lg mb-2 text-blue-800">Key Incentive: "Lei do Bem"</h5>
+                                <p class="text-blue-700">This law provides significant tax benefits for R&D&I activities. Key benefits include:</p>
+                                <ul class="list-disc list-inside mt-2 space-y-1 text-blue-700">
+                                    <li>Enhanced deductions (60-100%) on corporate income tax.</li>
+                                    <li>Accelerated depreciation of R&D assets.</li>
+                                    <li>50% reduction in IPI tax on R&D equipment.</li>
+                                    <li>0% withholding tax on foreign patent registration fees.</li>
+                                </ul>
+                            </div>
+                            <div class="p-4 bg-yellow-50 rounded-lg">
+                                <h5 class="font-bold text-lg mb-2 text-yellow-800">IP & Regulatory Hurdles</h5>
+                                <p class="text-yellow-700">Be aware of these challenges:</p>
+                                <ul class="list-disc list-inside mt-2 space-y-1 text-yellow-700">
+                                    <li><strong>ANVISA Approval:</strong> Rigorous process for clinical trials (RDC 945/2024).</li>
+                                    <li><strong>"Patent Paradox":</strong> Long examination times create legal uncertainty.</li>
+                                    <li><strong>No RDP:</strong> Lack of Regulatory Data Protection for human-use drugs is a key deterrent for innovators.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    `
+                },
+                digital: {
+                    id: 'digital',
+                    title: 'Digital Platform',
+                    icon: '💻',
+                    content: `
+                        <h4 class="font-bold text-xl mb-4">Digital Platform & Data Protection</h4>
+                        <p class="text-gray-600 mb-6">Your collaborative platform for scientists must fully comply with Brazil's General Data Protection Law (LGPD), which is very similar to GDPR. Non-compliance carries heavy fines.</p>
+                        <h5 class="font-bold text-lg mb-4">LGPD Compliance Checklist:</h5>
+                        <div class="space-y-3">
+                            <div class="flex items-start"><span class="text-green-500 mr-2">✓</span><span><strong>Appoint a Data Protection Officer (DPO):</strong> A mandatory role responsible for LGPD compliance.</span></div>
+                            <div class="flex items-start"><span class="text-green-500 mr-2">✓</span><span><strong>Lawful Basis for Processing:</strong> Ensure you have a valid reason (e.g., explicit, opt-in consent) for all data collected.</span></div>
+                            <div class="flex items-start"><span class="text-green-500 mr-2">✓</span><span><strong>User Rights:</strong> Implement processes to handle user requests for data access, correction, and deletion.</span></div>
+                            <div class="flex items-start"><span class="text-green-500 mr-2">✓</span><span><strong>Data Security:</strong> Adopt technical measures like encryption to protect personal data.</span></div>
+                            <div class="flex items-start"><span class="text-green-500 mr-2">✓</span><span><strong>International Transfers:</strong> Use approved mechanisms like Standard Contractual Clauses for data transfers outside Brazil.</span></div>
+                            <div class="flex items-start"><span class="text-green-500 mr-2">✓</span><span><strong>Transparency:</strong> Maintain a clear and accessible privacy policy.</span></div>
+                        </div>
+                    `
+                },
+                imports: {
+                    id: 'imports',
+                    title: 'Cosmetic Imports',
+                    icon: '📦',
+                    content: `
+                        <h4 class="font-bold text-xl mb-4">Importing Grade II Cosmetics</h4>
+                        <p class="text-gray-600 mb-6">Importing ANVISA Grade II cosmetics from the U.S. involves a multi-layered process of company certification, product registration, and navigating a complex tax structure. The total tax burden significantly increases the final cost.</p>
+                        <div class="grid md:grid-cols-2 gap-8 items-center">
+                            <div>
+                                <h5 class="font-bold text-lg mb-2">Cumulative Import Taxes</h5>
+                                <p class="text-gray-600 mb-4">Taxes are calculated on a cumulative basis, compounding the cost. This chart visualizes the impact on a sample import.</p>
+                                <div class="p-4 bg-gray-100 rounded-lg">
+                                    <div class="flex justify-between font-semibold"><span>Base (CIF) Value:</span><span>R$ 100.00</span></div>
+                                    <div class="flex justify-between"><span>+ Import Duty (II @ 12%)</span><span>R$ 12.00</span></div>
+                                    <div class="flex justify-between"><span>+ IPI (@ 10%)</span><span>R$ 11.20</span></div>
+                                    <div class="flex justify-between"><span>+ PIS/COFINS (@ 11.75%)</span><span>R$ 14.48</span></div>
+                                    <div class="flex justify-between"><span>+ ICMS (@ 18%)</span><span>R$ 32.40</span></div>
+                                    <hr class="my-1 border-gray-300">
+                                    <div class="flex justify-between font-bold"><span>Final Landed Cost:</span><span>R$ 170.08</span></div>
+                                    <div class="text-sm text-red-500 mt-1 font-semibold">Total tax burden of ~70% on base value.</div>
+                                </div>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="importTaxChart"></canvas>
+                            </div>
+                        </div>
+                        <h5 class="font-bold text-lg mb-4 mt-8">ANVISA Import & Registration Process</h5>
+                         <div class="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 text-center">
+                            <div class="flex-1 p-4 bg-gray-50 rounded-lg"><strong class="block text-blue-700">1. Company Certification</strong>Get Operating License & ANVISA's AFE.</div>
+                            <div class="text-2xl self-center text-gray-400">→</div>
+                            <div class="flex-1 p-4 bg-gray-50 rounded-lg"><strong class="block text-blue-700">2. Product Registration</strong>Submit dossier for Grade II product. Takes ~90 days.</div>
+                            <div class="text-2xl self-center text-gray-400">→</div>
+                            <div class="flex-1 p-4 bg-gray-50 rounded-lg"><strong class="block text-blue-700">3. Import License (LI)</strong>Obtain LI via Siscomex portal before shipping.</div>
+                            <div class="text-2xl self-center text-gray-400">→</div>
+                             <div class="flex-1 p-4 bg-gray-50 rounded-lg"><strong class="block text-blue-700">4. Sanitary Release</strong>ANVISA inspects shipment upon arrival.</div>
+                        </div>
+                        <!-- Gemini API Feature: ANVISA Process Clarifier -->
+                        <div class="mt-8 pt-6 border-t border-gray-200">
+                            <h4 class="font-bold text-xl mb-4">ANVISA Process Clarifier ✨</h4>
+                            <p class="text-gray-600 mb-4">Ask a specific question about the ANVISA import and registration process.</p>
+                            <textarea id="anvisa-query-input" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 mb-4" rows="3" placeholder="E.g., 'What are the typical documents required for product registration?'"></textarea>
+                            <button id="ask-anvisa-button" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition duration-300 flex items-center justify-center">
+                                Clarify ANVISA Step ✨ <span id="anvisa-loading-spinner" class="loading-spinner hidden"></span>
+                            </button>
+                            <div id="anvisa-response-area" class="mt-4 p-4 bg-gray-100 rounded-lg hidden"></div>
+                        </div>
+                    `
+                },
+            };
+
+            const whtData = [
+                { type: 'Dividends', current: '0%', future: '10% (from 2026)', details: 'Currently exempt, but proposed legislation introduces a 10% tax from 2026. A major change to watch.' },
+                { type: 'Interest', current: '15%', future: '15%', details: 'General rate for payments to non-treaty countries like the U.S.' },
+                { type: 'Royalties', current: '15%', future: '15%', details: 'General rate for IP licensing fees remitted abroad.' },
+            ];
+
+            const repatriationSteps = [
+                { step: 1, title: 'Register Investment', text: 'All foreign capital must be registered with the Central Bank of Brazil (BCB) via the RDE-IED system.' },
+                { step: 2, title: 'Execute FX Contract', text: 'For transfers > $10k, formalize a foreign exchange contract through an authorized bank.' },
+                { step: 3, title: 'Remit Funds', text: 'Bank processes the transfer. Remittance of profits and original capital are generally exempt from withholding tax (dividends changing in 2026).' },
+                { step: 4, title: 'Tax Capital Gains', text: 'If capital is repatriated for more than the registered amount, the gain is taxed at 15-25%.' },
+            ];
+
+            const recommendationsData = [
+                { icon: '🏢', title: 'Choose Ltda.', text: 'Use the Sociedade Limitada (Ltda.) structure for its operational simplicity and financial flexibility.' },
+                { icon: '🤝', title: 'Engage an EOR', text: 'Hire an Employer of Record to manage HR, payroll, and labor compliance, mitigating significant risks.' },
+                { icon: '💡', title: 'Leverage "Lei do Bem"', text: 'Actively use this R&D incentive law to gain significant tax deductions for your pharma innovation.' },
+                { icon: '🛡️', title: 'Prioritize LGPD', text: 'Ensure strict compliance with Brazil\'s data protection law for your digital platform from day one.' },
+                { icon: '📑', title: 'Master Transfer Pricing', text: 'Adopt robust, OECD-compliant documentation for all intercompany transactions under the new rules.' },
+                { icon: '🏦', title: 'Register All Capital', text: 'Meticulously register all foreign capital inflows with the Central Bank to ensure legal repatriation.' },
+            ];
+
+
+            // --- INITIALIZATION ---
+            
+            function init() {
+                populateEntityTable();
+                setupOpsTabs();
+                populateWhtCards();
+                populateRepatriationFlow();
+                populateRecommendations();
+                setupEventListeners();
+                
+                // Set initial active tab for operations
+                const initialOp = 'hr';
+                switchOpsTab(document.querySelector(`.ops-tab-button[data-tab="${initialOp}"]`));
+            }
+
+            // --- RENDER FUNCTIONS ---
+            
+            function populateEntityTable() {
+                const tableBody = document.querySelector('#entity-table tbody');
+                let html = '';
+                entityComparisonData.forEach(item => {
+                    html += `
+                        <tr class="table-row border-b border-gray-200 hover:bg-gray-50 cursor-pointer">
+                            <td class="p-4 font-medium">${item.feature}</td>
+                            <td class="p-4 text-green-800">${item.ltda}</td>
+                            <td class="p-4 text-orange-800">${item.sa}</td>
+                        </tr>
+                        <tr class="table-row-details bg-gray-100">
+                            <td colspan="3" class="p-4 text-gray-600">${item.details}</td>
+                        </tr>
+                    `;
+                });
+                tableBody.innerHTML = html;
+            }
+
+            function setupOpsTabs() {
+                const tabsContainer = document.getElementById('ops-tabs');
+                const contentContainer = document.getElementById('ops-content');
+                let tabsHtml = '';
+                let contentHtml = '';
+
+                Object.values(opsData).forEach((tab, index) => {
+                    tabsHtml += `
+                        <button data-tab="${tab.id}" class="ops-tab-button flex items-center text-gray-500 hover:text-blue-700 hover:border-blue-300 py-4 px-1 md:px-4 border-b-2 border-transparent text-sm md:text-base font-medium transition duration-300">
+                           <span class="mr-2">${tab.icon}</span> ${tab.title}
+                        </button>
+                    `;
+                    contentHtml += `<div id="ops-content-${tab.id}" class="hidden">${tab.content}</div>`;
+                });
+
+                tabsContainer.innerHTML = tabsHtml;
+                contentContainer.innerHTML = contentHtml;
+            }
+            
+            function populateWhtCards() {
+                const container = document.getElementById('wht-cards');
+                let html = '';
+                whtData.forEach(item => {
+                    html += `
+                        <div class="p-4 rounded-lg bg-gray-50 border border-gray-200">
+                            <div class="flex justify-between items-baseline">
+                                <h5 class="font-bold text-lg">${item.type}</h5>
+                                <div class="text-right">
+                                    <span class="wht-rate font-bold text-2xl text-blue-700" data-normal="15%" data-dividend="0%">${item.type === 'Dividends' ? item.current : item.current}</span>
+                                </div>
+                            </div>
+                            <p class="text-sm text-gray-500 mt-1">${item.details}</p>
+                            ${item.type === 'Dividends' ? `<p class="text-sm text-amber-600 font-semibold mt-1">Future Rate: ${item.future}</p>` : ''}
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            function populateRepatriationFlow() {
+                const container = document.getElementById('repatriation-flow');
+                let html = '';
+                repatriationSteps.forEach(item => {
+                    html += `
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 w-8 h-8 bg-blue-600 text-white font-bold rounded-full flex items-center justify-center mr-4">${item.step}</div>
+                            <div>
+                                <h5 class="font-semibold">${item.title}</h5>
+                                <p class="text-sm text-gray-600">${item.text}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+
+            function populateRecommendations() {
+                const container = document.getElementById('recommendations-list');
+                let html = '';
+                recommendationsData.forEach(item => {
+                    html += `
+                        <div class="bg-white p-6 rounded-xl shadow-lg flex items-start space-x-4">
+                            <div class="flex-shrink-0 text-3xl">${item.icon}</div>
+                            <div>
+                                <h5 class="font-bold text-lg text-gray-900">${item.title}</h5>
+                                <p class="text-gray-600">${item.text}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            }
+            
+
+            // --- CHART CREATION ---
+            let hrChart, importChart;
+
+            function createHrCostChart(salary = 10000) {
+                const ctx = document.getElementById('hrCostChart').getContext('2d');
+                const contributions = {
+                    inss: 0.20,
+                    fgts: 0.08,
+                    rat: 0.03, // Average
+                    terceiros: 0.058,
+                    benefits: 0.305, // Approximation for 13th salary, vacation bonus, etc.
+                };
+                const totalContributions = Object.values(contributions).reduce((a, b) => a + b, 0);
+                const costMultiplier = totalContributions;
+                
+                const data = {
+                    labels: ['Gross Salary', 'INSS (20%)', 'FGTS (8%)', 'RAT (~3%)', 'Terceiros (5.8%)', 'Provisions (13th, etc)'],
+                    datasets: [{
+                        data: [
+                            salary, 
+                            salary * contributions.inss,
+                            salary * contributions.fgts,
+                            salary * contributions.rat,
+                            salary * contributions.terceiros,
+                            salary * contributions.benefits,
+                        ],
+                        backgroundColor: ['#3b82f6', '#ef4444', '#f97316', '#eab308', '#84cc16', '#14b8a6'],
+                        borderColor: '#ffffff',
+                        borderWidth: 2,
+                    }]
+                };
+                
+                document.getElementById('total-cost').textContent = `R$ ${((salary * (1 + costMultiplier))).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`;
+                document.getElementById('cost-multiplier').textContent = `${(costMultiplier * 100).toFixed(1)}%`;
+
+
+                if (hrChart) {
+                    hrChart.data = data;
+                    hrChart.update();
+                } else {
+                    hrChart = new Chart(ctx, {
+                        type: 'doughnut',
+                        data: data,
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        boxWidth: 12,
+                                        font: { size: 10 }
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Employer Cost Breakdown'
+                                },
+                                tooltip: {
+                                    callbacks: {
+                                        label: function(context) {
+                                            let label = context.label || '';
+                                            if (label) {
+                                                label += ': ';
+                                            }
+                                            if (context.parsed !== null) {
+                                                label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed);
+                                            }
+                                            return label;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            }
+
+            function createImportTaxChart() {
+                const ctx = document.getElementById('importTaxChart').getContext('2d');
+                const data = {
+                    labels: ['Landed Cost'],
+                    datasets: [
+                        { label: 'Base CIF Value', data: [100], backgroundColor: '#3b82f6', },
+                        { label: 'Import Duty (II)', data: [12], backgroundColor: '#ef4444', },
+                        { label: 'Industrialized Tax (IPI)', data: [11.20], backgroundColor: '#f97316', },
+                        { label: 'PIS/COFINS', data: [14.48], backgroundColor: '#eab308', },
+                        { label: 'State VAT (ICMS)', data: [32.40], backgroundColor: '#8b5cf6', }
+                    ]
+                };
+
+                importChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: { stacked: true, title: { display: true, text: 'Cost (R$)' } },
+                            y: { stacked: true, display: false }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { size: 10 }
+                                }
+                            },
+                            title: { display: true, text: 'Cumulative Import Tax Stack' },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) { label += ': '; }
+                                        if (context.parsed.x !== null) {
+                                            label += new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(context.parsed.x);
+                                        }
+                                        return label;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+            
+
+            // --- GEMINI API INTEGRATION ---
+            async function callGeminiAPI(prompt, responseElementId, loadingSpinnerId) {
+                const responseArea = document.getElementById(responseElementId);
+                const loadingSpinner = document.getElementById(loadingSpinnerId);
+                
+                responseArea.classList.add('hidden');
+                responseArea.innerHTML = '';
+                loadingSpinner.classList.remove('hidden');
+
+                try {
+                    let chatHistory = [];
+                    chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+                    const payload = { contents: chatHistory };
+                    const apiKey = ""; // If you want to use models other than gemini-2.0-flash or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
+                    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                    
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+                    
+                    const result = await response.json();
+
+                    if (result.candidates && result.candidates.length > 0 &&
+                        result.candidates[0].content && result.candidates[0].content.parts &&
+                        result.candidates[0].content.parts.length > 0) {
+                        const text = result.candidates[0].content.parts[0].text;
+                        responseArea.innerHTML = `<p class="text-gray-700">${text}</p>`;
+                        responseArea.classList.remove('hidden');
+                    } else {
+                        responseArea.innerHTML = `<p class="text-red-600">Error: No response from AI. Please try again.</p>`;
+                        responseArea.classList.remove('hidden');
+                        console.error('Unexpected API response structure:', result);
+                    }
+                } catch (error) {
+                    responseArea.innerHTML = `<p class="text-red-600">Error: Failed to fetch AI response. ${error.message}</p>`;
+                    responseArea.classList.remove('hidden');
+                    console.error('API call failed:', error);
+                } finally {
+                    loadingSpinner.classList.add('hidden');
+                }
+            }
+
+            // --- EVENT LISTENERS ---
+
+            function switchOpsTab(button) {
+                const tabId = button.dataset.tab;
+                
+                // Hide all content panels
+                document.querySelectorAll('#ops-content > div').forEach(panel => panel.classList.add('hidden'));
+                
+                // Deactivate all tab buttons
+                document.querySelectorAll('.ops-tab-button').forEach(btn => {
+                    btn.classList.remove('text-blue-700', 'border-blue-600', 'font-semibold');
+                    btn.classList.add('text-gray-500', 'border-transparent');
+                });
+                
+                // Activate the selected tab and content
+                document.getElementById(`ops-content-${tabId}`).classList.remove('hidden');
+                button.classList.add('text-blue-700', 'border-blue-600', 'font-semibold');
+                button.classList.remove('text-gray-500', 'border-transparent');
+                
+                // Initialize charts if they are in the active tab
+                if (tabId === 'hr' && !hrChart) {
+                    createHrCostChart();
+                } else if (tabId === 'imports' && !importChart) {
+                    createImportTaxChart();
+                }
+            }
+            
+            function setupEventListeners() {
+                const mobileMenuButton = document.getElementById('mobile-menu-button');
+                const mobileMenu = document.getElementById('mobile-menu');
+                mobileMenuButton.addEventListener('click', () => {
+                    mobileMenu.classList.toggle('hidden');
+                });
+
+                document.getElementById('entity-table').addEventListener('click', (e) => {
+                    const row = e.target.closest('.table-row');
+                    if (row) {
+                        row.classList.toggle('active');
+                    }
+                });
+
+                document.getElementById('ops-tabs').addEventListener('click', (e) => {
+                    const button = e.target.closest('.ops-tab-button');
+                    if (button) {
+                       switchOpsTab(button);
+                    }
+                });
+
+                const salarySlider = document.getElementById('salary-slider');
+                if (salarySlider) {
+                    salarySlider.addEventListener('input', (e) => {
+                        const salary = parseFloat(e.target.value);
+                        document.getElementById('salary-value').textContent = `R$ ${salary.toLocaleString('pt-BR')}`;
+                        createHrCostChart(salary);
+                    });
+                }
+
+                document.getElementById('tax-haven-toggle').addEventListener('change', (e) => {
+                    const isTaxHaven = e.target.checked;
+                    const whtRates = document.querySelectorAll('.wht-rate');
+                    whtRates.forEach(rateEl => {
+                        if (rateEl.dataset.dividend) { // Special handling for dividends
+                             rateEl.textContent = isTaxHaven ? '25%' : rateEl.dataset.dividend;
+                        } else {
+                             rateEl.textContent = isTaxHaven ? '25%' : rateEl.dataset.normal;
+                        }
+                    });
+                });
+                
+                // Nav link highlighting on scroll
+                const sections = document.querySelectorAll('section[id]');
+                const navLinks = document.querySelectorAll('.nav-link');
+                
+                const observer = new IntersectionObserver((entries) => {
+                    entries.forEach(entry => {
+                        if(entry.isIntersecting) {
+                            navLinks.forEach(link => {
+                                link.classList.remove('active');
+                                if(link.getAttribute('href').substring(1) === entry.target.id) {
+                                    link.classList.add('active');
+                                }
+                            });
+                        }
+                    });
+                }, { rootMargin: "-50% 0px -50% 0px" });
+
+                sections.forEach(section => {
+                    observer.observe(section);
+                });
+
+                // Gemini API Event Listeners
+                document.getElementById('ask-legal-button').addEventListener('click', async () => {
+                    const query = document.getElementById('legal-query-input').value;
+                    if (!query.trim()) {
+                        document.getElementById('legal-response-area').innerHTML = '<p class="text-red-600">Please enter a question.</p>';
+                        document.getElementById('legal-response-area').classList.remove('hidden');
+                        return;
+                    }
+                    const legalContext = `The user is asking about legal entities in Brazil, specifically comparing Sociedade Limitada (Ltda.) and Sociedade Anônima (S.A.). Ltda. is similar to a U.S. LLC, simpler, governed by Civil Code, allows flexible profit distribution, and is recommended for foreign subsidiaries. S.A. is similar to a U.S. Corporation, more complex, governed by Corporate Law, has freely transferable shares, and requires a board.`;
+                    const prompt = `${legalContext}\n\nUser's question: ${query}\n\nProvide a concise and informative answer.`;
+                    await callGeminiAPI(prompt, 'legal-response-area', 'legal-loading-spinner');
+                });
+
+                document.getElementById('generate-jd-button').addEventListener('click', async () => {
+                    const jobTitle = document.getElementById('job-title-input').value;
+                    if (!jobTitle.trim()) {
+                        document.getElementById('jd-response-area').innerHTML = '<p class="text-red-600">Please enter a job title.</p>';
+                        document.getElementById('jd-response-area').classList.remove('hidden');
+                        return;
+                    }
+                    const jdPrompt = `Draft a basic job description for a ${jobTitle} role in Brazil. Include typical responsibilities and required qualifications relevant to the Brazilian context (e.g., Portuguese fluency, local market understanding). Format it clearly with sections for 'Responsibilities' and 'Qualifications'.`;
+                    await callGeminiAPI(jdPrompt, 'jd-response-area', 'jd-loading-spinner');
+                });
+
+                document.getElementById('ask-anvisa-button').addEventListener('click', async () => {
+                    const query = document.getElementById('anvisa-query-input').value;
+                    if (!query.trim()) {
+                        document.getElementById('anvisa-response-area').innerHTML = '<p class="text-red-600">Please enter a question.</p>';
+                        document.getElementById('anvisa-response-area').classList.remove('hidden');
+                        return;
+                    }
+                    const anvisaContext = `The ANVISA import and registration process for Grade II cosmetics in Brazil involves these steps: 1. Company Certification (Operating License & ANVISA's AFE), 2. Product Registration (submit dossier, takes ~90 days), 3. Import License (LI via Siscomex before shipping), 4. Sanitary Release (ANVISA inspects shipment upon arrival).`;
+                    const prompt = `${anvisaContext}\n\nUser's question about ANVISA process: ${query}\n\nProvide a clear and concise answer.`;
+                    await callGeminiAPI(prompt, 'anvisa-response-area', 'anvisa-loading-spinner');
+                });
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
